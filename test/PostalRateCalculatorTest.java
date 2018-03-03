@@ -115,10 +115,39 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    public void weightPrecision(){
+        String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","25.0001","xpress"};
+        PostalRate.main(args);
+        String expected = "Weight must have at must 3 decimals\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
     public void largeWeight(){
         String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","30.01","xpress"};
         PostalRate.main(args);
         String expected = "Weight must be at most 30.00 kg\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
     }
+
+    @Test
+    public void dimensionPrecision(){
+        String args[] = new String[]{"A1A1A1","A1A1A1","0.001","10.002","30.004","30","xpress"};
+        PostalRate.main(args);
+        String expected = "Dimensions must have at most 2 decimals\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void dimensionsOverLimit(){
+        String args[] = new String[]{"A1A1A1","A1A1A1","100","50","50.01","10","xpress"};
+        PostalRate.main(args);
+        String expected = "Sum of dimensions must be at most 200\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+//    @Test
+//    public void dimensionsTooSmall(){
+//
+//    }
 }

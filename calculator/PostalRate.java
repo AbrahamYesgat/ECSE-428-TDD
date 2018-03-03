@@ -53,11 +53,33 @@ public class PostalRate {
             else if(Float.valueOf(args[5]) > 30.01){
 		        System.out.print("Weight must be at most 30.00 kg\n");
             }
+            else if(weightPrecision(args[5]) > 3){
+		        System.out.print("Weight must have at must 3 decimals\n");
+            }
+            else if(weightPrecision(args[2])>2||weightPrecision(args[3])>2||weightPrecision(args[4])>2){
+		        System.out.print("Dimensions must have at most 2 decimals\n");
+            }
+            else if(!validDimensions(args[2], args[3], args[4])){
+		        System.out.print("Sum of dimensions must be at most 200\n");
+            }
         }
 	}
-
-	public static boolean validDimensions(float length, float width, float height){
-	    boolean validDimensions = false;
-	    return validDimensions;
+    public static boolean validDimensions(String length, String width, String height){
+        boolean validDimensions = false;
+        float l = Float.valueOf(length);
+        float w = Float.valueOf(width);
+        float h = Float.valueOf(height);
+        if(l+w+h<=200.00){
+            validDimensions = true;
+        }
+        return validDimensions;
+    }
+	public static int weightPrecision(String weight){
+        int integerPlaces = weight.indexOf('.');
+        if(integerPlaces == -1) {
+            return 0;
+        }
+        int decimalPlaces = weight.length() - integerPlaces - 1;
+        return decimalPlaces;
     }
 }
