@@ -142,12 +142,15 @@ public class PostalRateCalculatorTest {
     public void dimensionsOverLimit(){
         String args[] = new String[]{"A1A1A1","A1A1A1","100","50","50.01","10","xpress"};
         PostalRate.main(args);
-        String expected = "Sum of dimensions must be at most 200\n";
+        String expected = "Sum of dimensions must be at most 200 cm\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
     }
 
-//    @Test
-//    public void dimensionsTooSmall(){
-//
-//    }
+    @Test
+    public void dimensionsTooSmall(){
+        String args[] = new String[]{"A1A1A1","A1A1A1","0.0099","0.009","0.001","10","xpress"};
+        PostalRate.main(args);
+        String expected = "Dimensions must have at most 2 decimals\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
 }

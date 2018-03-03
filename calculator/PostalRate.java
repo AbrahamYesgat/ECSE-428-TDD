@@ -60,7 +60,7 @@ public class PostalRate {
 		        System.out.print("Dimensions must have at most 2 decimals\n");
             }
             else if(!validDimensions(args[2], args[3], args[4])){
-		        System.out.print("Sum of dimensions must be at most 200\n");
+		        System.out.print("Sum of dimensions must be at most 200 cm\n");
             }
         }
 	}
