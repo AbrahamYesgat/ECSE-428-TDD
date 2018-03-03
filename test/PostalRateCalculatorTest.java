@@ -1,7 +1,14 @@
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class PostalRateCalculatorTest {
 	/*Input Variables:From: Postal Code
@@ -12,39 +19,106 @@ public class PostalRateCalculatorTest {
 	 * •Post Type: [Regular, Xpress, Priority]
 	 */
 	@Before
-	public void setup(){
-	}
+	public void setup(){}
+
+	@After
+    public void tearDown(){
+    }
+    @Rule
+    public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
 	@Test
 	//Expected String as follows: Postal code source, destination, width length height weight postal type"
 	public void noArgs() {
-		assertEquals("null", "null");
+	    PostalRate.main(null);
+	    String expected = "Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n";
+        assertEquals(expected , systemOutRule.getLogWithNormalizedLineSeparator());
 	}
 	
 	@Test
-	public void lessargs(){
-		assertEquals("null", "null");
+	public void lessArgs(){
+		String args[] = new String[]{"10"};
+		PostalRate.main(args);
+		String expected = "Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n";
+		assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
 	}
-	
-	@Test
-	public void manyargs(){
-		assertEquals("null", "null");
-	}
-	
-	@Test
-	public void outofRangeHigh() {
-		String [] inp= {"rwfe", "Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postal, type"};
-		assertEquals("PostalRate < 10^9", "PostalRate < 10^9");
 
-	}
-	
 	@Test
-	public void outOfRangLow() {
-		assertEquals("","jhg");
-		
+	public void manyArgs(){
+        String args[] = new String[]{"10", "10", "10", "10", "10", "10", "10", "10"};
+        PostalRate.main(args);
+        String expected = "Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
 	}
-	
-	
-	
-	
+
+    @Test
+    public void outOfRangeHigh() {
+        String args[] = new String[]{"201","201","201","201","201","201","201"};
+        PostalRate.main(args);
+        String expected = "Numbers must be at most 200\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+	@Test
+	public void outOfRangeLow() {
+        String args[] = new String[]{"0.0001","0.0001","0.0001","0.0001","0.0001","0.0001","0.0001"};
+        PostalRate.main(args);
+        String expected = "Numbers must be at least 0.001\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+	}
+
+	@Test
+    public void addressTooLarge() {
+        String args[] = new String[]{"A1A1A1A","A1A1A1A","10","10","10","10","10"};
+        PostalRate.main(args);
+        String expected = "Input a valid address: X#X#X#\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void addressTooSmall(){
+          String args[] = new String[]{"A1A","A1A","10","10","10","10","10"};
+        PostalRate.main(args);
+        String expected = "Input a valid address: X#X#X#\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void addressOnlyNumbers(){
+        String args[] = new String[]{"111111","111111","10","10","10","10","10"};
+        PostalRate.main(args);
+        String expected = "Input a valid address: X#X#X#\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void addressOnlyLetters(){
+        String args[] = new String[]{"AAAAAA","AAAAAA","10","10","10","10","10"};
+        PostalRate.main(args);
+        String expected = "Input a valid address: X#X#X#\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void addressLowerCase(){
+        String args[] = new String[]{"a1a1a1","a1a1a1","10","10","10","10","xpress"};
+        PostalRate.main(args);
+        assertEquals("", systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void invalidPostType(){
+        String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","10","aaa"};
+        PostalRate.main(args);
+        String expected = "Post types available: “Xpress”, “Regular”, “Priority”\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void largeWeight(){
+        String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","30.01","xpress"};
+        PostalRate.main(args);
+        String expected = "Weight must be at most 30.00 kg\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
 }
