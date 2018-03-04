@@ -171,19 +171,17 @@ public class PostalRateCalculatorTest {
 //    }
 //
 //    @Test
-//    public void volumetricEquivalentChosen(){
-//        assertEquals(10.66, getEquivWeight(40.00, 40.00, 40.00, 10.00, "regular"));
+//    public void validRegularRate(){
+//
 //    }
 //
 //    @Test
-//    public void weightChosen(){
-//        assertEquals(10.00, getEquivWeight(10.00, 10.00, 10.00, 10.00, "regular"));
+//    public void validXpressRate(){
+//
 //    }
 //
 //    @Test
-//    public void volumetricXpressPriority(){
-//        assertEquals(12.8, getEquivWeight(40.00, 40.00, 40.00, 10.00, "Xpress"));
+//    public void validPriorityRate(){
+//
 //    }
-
-
 }
