@@ -154,13 +154,13 @@ public class PostalRateCalculatorTest {
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
     }
 
-//    @Test
-//    public void unassociatedAddress(){
-//        String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","xpress"};
-//        PostalRate.main(args);
-//        String expected = "Invalid Canadian Postal Code\n";
-//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
-//    }
+    @Test
+    public void unassociatedAddress(){
+        String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","xpress"};
+        PostalRate.main(args);
+        String expected = "Invalid Canadian Postal Code\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
 //
 //    @Test
 //    public void nunavutPostalType(){
@@ -172,16 +172,25 @@ public class PostalRateCalculatorTest {
 //
 //    @Test
 //    public void validRegularRate(){
-//
+//        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "regular"};
+//        PostalRate.main(args);
+//        String expected = "The cost will be 33.58$\n";
+//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
 //    }
 //
 //    @Test
 //    public void validXpressRate(){
-//
+//        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "xpress"};
+//        PostalRate.main(args);
+//        String expected = "The cost will be 87.23$\n";
+//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
 //    }
 //
 //    @Test
 //    public void validPriorityRate(){
-//
+//        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "priority"};
+//        PostalRate.main(args);
+//        String expected = "The cost will be 116.94$\n";
+//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
 //    }
 }
