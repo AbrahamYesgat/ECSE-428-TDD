@@ -26,29 +26,18 @@ public class PostalRate {
 	public String destPostalCode;
 	public String sourcePostalCode;
 	public PostType postType;
-	public static Destination destination;
+	public Destination destination;
 	private Client aClient;
 	private static final String LINK = "https://ct.soa-gw.canadapost.ca/rs/ship/price";
 	
-//	public enum Destination {
-//        AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT
-//	}
+	public enum Province {
+        AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT
+	}
 	public enum PostType {
 		REGULAR, XPRESS, PRIORITY
 	}
 
 	public static void main (String args[]) {
-		String sourcePC=args[1];
-		String destPC=args[2];
-//		Destination SRC=getProvince(sourcePC);
-//		Destination DEST=getProvince(destPC);
-		String postType = args[8];
-		PostType PT=getPostType(postType);
-		width=Float.valueOf(args[3]);
-		length=Float.valueOf(args[4]);
-		height=Float.valueOf(args[5]);
-		float multiplier = getMultiplier(height, length, width, weight, PT);
-	
 		if(args==null || args.length != 7) {
 			System.out.print("Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n");
 		}
@@ -97,7 +86,16 @@ public class PostalRate {
             else if(!validDimensions(args[2], args[3], args[4])){
 		        System.out.print("Length + 2(Width + Height) must be at most 300 cm\n");
             }
-         // Your username, password and customer number are imported from the following file    	
+            String sourcePC=args[1];
+		    String destPC=args[2];
+//			Destination SRC=getProvince(sourcePC);
+//			Destination DEST=getProvince(destPC);
+			String postType = args[7];
+			PostType PT=getPostType(postType);
+			width=Float.valueOf(args[3]);
+			length=Float.valueOf(args[4]);
+			height=Float.valueOf(args[5]);
+			// Your username, password and customer number are imported from the following file
         	// CPCWS_Rating_Java_Samples/user.properties 
         	Properties userProps = new Properties();
 //        	FileInputStream propInputStream;
@@ -110,7 +108,6 @@ public class PostalRate {
 //    			e.printStackTrace(System.out);
 //    			return;
 //    		}
-        	System.out.println("trgernbgrgnergerlign");
         	String username = userProps.getProperty("ECSE428B");
         	String password = userProps.getProperty("Ecse-428");
         	String mailedBy = userProps.getProperty("0008688906"); 
@@ -197,32 +194,22 @@ public class PostalRate {
 	 * G,H,J=QC; K,L,M,N,P=ON;
 	 * R=MB; S=SK; T=AB; V=BC; X=NU/NTY=YT.
 	 */
-//	public static Destination getProvince(String PostalCode) {
-//		PostalCode.toUpperCase();
-//		Destination dest = null;
-//		if(PostalCode.startsWith("A")) dest=Destination.NL;
-//		if(PostalCode.startsWith("B")) dest=Destination.NS;
-//		if(PostalCode.startsWith("C")) dest=Destination.PE;
-//		if(PostalCode.startsWith("E")) dest=Destination.NB;
-//		if(PostalCode.startsWith("G") || PostalCode.startsWith("H") || PostalCode.startsWith("J")) dest=Destination.QC;
-//		if(PostalCode.startsWith("K") || PostalCode.startsWith("L") || PostalCode.startsWith("M") || PostalCode.startsWith("N")|| PostalCode.startsWith("P")) dest=Destination.ON;
-//		if(PostalCode.startsWith("R")) dest=Destination.MB;
-//		if(PostalCode.startsWith("S")) dest=Destination.SK;
-//		if(PostalCode.startsWith("T")) dest=Destination.AB;
-//		if(PostalCode.startsWith("V")) dest=Destination.BC;
-//		if(PostalCode.startsWith("X")) dest=Destination.NU;
-//		if(PostalCode.startsWith("Y")) dest=Destination.YT;
-//		return dest;
-//	}
-	public static float getMultiplier(float h, float l, float w, float weight, PostType PT) {
-		float densityFactor=0f;
-		float volEquiv;
-		float vol=h*l*w;
-		if(PT== PostType.REGULAR) densityFactor=5000;
-		else if (PT== PostType.PRIORITY || PT==PostType.XPRESS) densityFactor=6000;
-		volEquiv=vol/densityFactor;
-		if(volEquiv>weight) return volEquiv;
-		else return weight;
+	public static Province getProvince(String PostalCode) {
+		PostalCode.toUpperCase();
+		Province dest = null;
+		if(PostalCode.startsWith("A")) dest=Province.NL;
+		if(PostalCode.startsWith("B")) dest=Province.NS;
+		if(PostalCode.startsWith("C")) dest=Province.PE;
+		if(PostalCode.startsWith("E")) dest=Province.NB;
+		if(PostalCode.startsWith("G") || PostalCode.startsWith("H") || PostalCode.startsWith("J")) dest=Province.QC;
+		if(PostalCode.startsWith("K") || PostalCode.startsWith("L") || PostalCode.startsWith("M") || PostalCode.startsWith("N")|| PostalCode.startsWith("P")) dest=Province.ON;
+		if(PostalCode.startsWith("R")) dest=Province.MB;
+		if(PostalCode.startsWith("S")) dest=Province.SK;
+		if(PostalCode.startsWith("T")) dest=Province.AB;
+		if(PostalCode.startsWith("V")) dest=Province.BC;
+		if(PostalCode.startsWith("X")) dest=Province.NU;
+		if(PostalCode.startsWith("Y")) dest=Province.YT;
+		return dest;
 	}
 	
 	public static PostType getPostType(String PT) {
