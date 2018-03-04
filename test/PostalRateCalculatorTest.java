@@ -140,9 +140,9 @@ public class PostalRateCalculatorTest {
 
     @Test
     public void dimensionsOverLimit(){
-        String args[] = new String[]{"A1A1A1","A1A1A1","100","50","50.01","10","xpress"};
+        String args[] = new String[]{"A1A1A1","A1A1A1","100","75","75","10","xpress"};
         PostalRate.main(args);
-        String expected = "Sum of dimensions must be at most 200 cm\n";
+        String expected = "Length + 2(Width + Height) must be at most 300 cm\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
     }
 
