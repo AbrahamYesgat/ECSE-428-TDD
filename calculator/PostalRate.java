@@ -26,19 +26,18 @@ public class PostalRate {
 	public String destPostalCode;
 	public String sourcePostalCode;
 	public PostType postType;
-	public Destination destination;
+	public static Destination destination;
 	private Client aClient;
 	private static final String LINK = "https://ct.soa-gw.canadapost.ca/rs/ship/price";
 	
-	public enum Province {
-        AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT
-	}
+//	public enum Destination {
+//        AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT
+//	}
 	public enum PostType {
 		RegularParcel, Xpresspost, Priority
 	}
 
 	public static void main (String args[]) {
-<<<<<<< HEAD
 		String sourcePC=args[0].toUpperCase();
 		String destPC=args[1].toUpperCase();
 		String postType = args[6];
@@ -47,8 +46,6 @@ public class PostalRate {
 		height=Float.valueOf(args[4]);
 		weight=Float.valueOf(args[5]);
 		
-=======
->>>>>>> 586a8f2f6e025b237fc35cd85d04bb29fb61e023
 		if(args==null || args.length != 7) {
 			System.out.print("Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n");
 		}
@@ -97,19 +94,9 @@ public class PostalRate {
             else if(!validDimensions(args[2], args[3], args[4])){
 		        System.out.print("Length + 2(Width + Height) must be at most 300 cm\n");
             }
-            String sourcePC=args[1];
-		    String destPC=args[2];
-//			Destination SRC=getProvince(sourcePC);
-//			Destination DEST=getProvince(destPC);
-			String postType = args[7];
-			PostType PT=getPostType(postType);
-			width=Float.valueOf(args[3]);
-			length=Float.valueOf(args[4]);
-			height=Float.valueOf(args[5]);
-			// Your username, password and customer number are imported from the following file
+         // Your username, password and customer number are imported from the following file    	
         	// CPCWS_Rating_Java_Samples/user.properties 
         	Properties userProps = new Properties();
-<<<<<<< HEAD
         	FileInputStream propInputStream;
     		try {
     			propInputStream = new FileInputStream("user.properties");
@@ -123,21 +110,6 @@ public class PostalRate {
         	String username = userProps.getProperty("username");
         	String password = userProps.getProperty("password");
         	String mailedBy = userProps.getProperty("mailedBy"); 
-=======
-//        	FileInputStream propInputStream;
-//    		try {
-//    			propInputStream = new FileInputStream("user.properties");
-//    			userProps.load(propInputStream);
-//    			propInputStream.close(); // better in finally block
-//    		} catch (Exception e) {
-//    			// TODO Auto-generated catch block
-//    			e.printStackTrace(System.out);
-//    			return;
-//    		}
-        	String username = userProps.getProperty("ECSE428B");
-        	String password = userProps.getProperty("Ecse-428");
-        	String mailedBy = userProps.getProperty("0008688906"); 
->>>>>>> 586a8f2f6e025b237fc35cd85d04bb29fb61e023
     		
     		// Create GetRates XML Request Object
     		MailingScenario mailingScenario = new MailingScenario();
@@ -214,45 +186,7 @@ public class PostalRate {
         int decimalPlaces = weight.length() - integerPlaces - 1;
         return decimalPlaces;
     }
-<<<<<<< HEAD
 
-=======
-	
-	/*This method calculates the rate for the corresponding postal codes
-	 * Postal codes beginning with:
-	 * A=NL; B=NS; C=PE; E=NB;
-	 * G,H,J=QC; K,L,M,N,P=ON;
-	 * R=MB; S=SK; T=AB; V=BC; X=NU/NTY=YT.
-	 */
-	public static Province getProvince(String PostalCode) {
-		PostalCode.toUpperCase();
-		Province dest = null;
-		if(PostalCode.startsWith("A")) dest=Province.NL;
-		if(PostalCode.startsWith("B")) dest=Province.NS;
-		if(PostalCode.startsWith("C")) dest=Province.PE;
-		if(PostalCode.startsWith("E")) dest=Province.NB;
-		if(PostalCode.startsWith("G") || PostalCode.startsWith("H") || PostalCode.startsWith("J")) dest=Province.QC;
-		if(PostalCode.startsWith("K") || PostalCode.startsWith("L") || PostalCode.startsWith("M") || PostalCode.startsWith("N")|| PostalCode.startsWith("P")) dest=Province.ON;
-		if(PostalCode.startsWith("R")) dest=Province.MB;
-		if(PostalCode.startsWith("S")) dest=Province.SK;
-		if(PostalCode.startsWith("T")) dest=Province.AB;
-		if(PostalCode.startsWith("V")) dest=Province.BC;
-		if(PostalCode.startsWith("X")) dest=Province.NU;
-		if(PostalCode.startsWith("Y")) dest=Province.YT;
-		return dest;
-	}
-	
-	public static PostType getPostType(String PT) {
-		PostType Regular=PostType.REGULAR;
-		PostType Xpress=PostType.XPRESS;
-		PostType Priority=PostType.PRIORITY;
-		if(PT.equalsIgnoreCase("Regular")) return Regular;
-		else if(PT.equalsIgnoreCase("Express")) return Xpress;
-		else if(PT.equalsIgnoreCase("Priority")) return Priority;
-		else return null;
-	}
-	
->>>>>>> 586a8f2f6e025b237fc35cd85d04bb29fb61e023
     public PostalRate(String username, String password) {
         ClientConfig config = new DefaultClientConfig();
         aClient = Client.create(config);
