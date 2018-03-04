@@ -34,21 +34,18 @@ public class PostalRate {
 //        AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT
 //	}
 	public enum PostType {
-		REGULAR, XPRESS, PRIORITY
+		RegularParcel, Xpresspost, Priority
 	}
 
 	public static void main (String args[]) {
-		String sourcePC=args[1];
-		String destPC=args[2];
-//		Destination SRC=getProvince(sourcePC);
-//		Destination DEST=getProvince(destPC);
-		String postType = args[8];
-		PostType PT=getPostType(postType);
-		width=Float.valueOf(args[3]);
-		length=Float.valueOf(args[4]);
-		height=Float.valueOf(args[5]);
-		float multiplier = getMultiplier(height, length, width, weight, PT);
-	
+		String sourcePC=args[0].toUpperCase();
+		String destPC=args[1].toUpperCase();
+		String postType = args[6];
+		width=Float.valueOf(args[2]);
+		length=Float.valueOf(args[3]);
+		height=Float.valueOf(args[4]);
+		weight=Float.valueOf(args[5]);
+		
 		if(args==null || args.length != 7) {
 			System.out.print("Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n");
 		}
@@ -100,41 +97,37 @@ public class PostalRate {
          // Your username, password and customer number are imported from the following file    	
         	// CPCWS_Rating_Java_Samples/user.properties 
         	Properties userProps = new Properties();
-//        	FileInputStream propInputStream;
-//    		try {
-//    			propInputStream = new FileInputStream("user.properties");
-//    			userProps.load(propInputStream);
-//    			propInputStream.close(); // better in finally block
-//    		} catch (Exception e) {
-//    			// TODO Auto-generated catch block
-//    			e.printStackTrace(System.out);
-//    			return;
-//    		}
-        	System.out.println("trgernbgrgnergerlign");
-        	String username = userProps.getProperty("ECSE428B");
-        	String password = userProps.getProperty("Ecse-428");
-        	String mailedBy = userProps.getProperty("0008688906"); 
+        	FileInputStream propInputStream;
+    		try {
+    			propInputStream = new FileInputStream("user.properties");
+    			userProps.load(propInputStream);
+    			propInputStream.close(); // better in finally block
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace(System.out);
+    			return;
+    		}
+        	String username = userProps.getProperty("username");
+        	String password = userProps.getProperty("password");
+        	String mailedBy = userProps.getProperty("mailedBy"); 
     		
     		// Create GetRates XML Request Object
     		MailingScenario mailingScenario = new MailingScenario();
-    		
     		mailingScenario.setCustomerNumber(mailedBy);
-
     		MailingScenario.ParcelCharacteristics parcelCharacteristics = new MailingScenario.ParcelCharacteristics();
     		parcelCharacteristics.setWeight(new BigDecimal(weight));
     		Dimensions dim = new Dimensions();
     		dim.setHeight(new BigDecimal(height));
-    		dim.setLength(new BigDecimal(weight));
-    		dim.setWidth(new BigDecimal(length));
+    		dim.setLength(new BigDecimal(length));
+    		dim.setWidth(new BigDecimal(width));
     		parcelCharacteristics.setDimensions(dim);
-    		mailingScenario.setParcelCharacteristics(parcelCharacteristics);
-    		mailingScenario.setOriginPostalCode("T6G2R3");
+    		mailingScenario.setOriginPostalCode(sourcePC);
     		Domestic domestic = new Domestic();
-    		domestic.setPostalCode("H9W6C3");		
+    		domestic.setPostalCode(destPC);		
     		Destination destination = new Destination();
     		destination.setDomestic(domestic);
     		mailingScenario.setDestination(destination);
-
+    		mailingScenario.setParcelCharacteristics(parcelCharacteristics);
     		// Execute GetRates Request
             PostalRate myClient = new PostalRate(username, password);
             ClientResponse resp = myClient.createMailingScenario(mailingScenario);
@@ -151,9 +144,11 @@ public class PostalRate {
                 if (entity instanceof PriceQuotes) {
                 	PriceQuotes priceQuotes = (PriceQuotes) entity;
                     for (Iterator<PriceQuotes.PriceQuote> iter = priceQuotes.getPriceQuotes().iterator(); iter.hasNext();) { 
-                    	PriceQuotes.PriceQuote aPriceQuote = (PriceQuotes.PriceQuote) iter.next();                	
-    	                System.out.println("Service Name: " + aPriceQuote.getServiceName());
-    	                System.out.println("Price: $" + aPriceQuote.getPriceDetails().getDue() + "\n");
+                    	PriceQuotes.PriceQuote aPriceQuote = (PriceQuotes.PriceQuote) iter.next();   
+                    		if(aPriceQuote.getServiceName().equalsIgnoreCase(postType) || ((aPriceQuote.getServiceName().equalsIgnoreCase("Regular Parcel") && postType.equals("Regular") ) )) {
+                    			System.out.println("Service Name: " + aPriceQuote.getServiceName());
+                    			System.out.println("Price: $" + aPriceQuote.getPriceDetails().getDue() + "\n");
+                    		}
                     }
                 } else {
                     // Assume Error Schema
@@ -171,6 +166,7 @@ public class PostalRate {
             myClient.close();   
         }
 	}
+
 	
     public static boolean validDimensions(String length, String width, String height){
         boolean validDimensions = false;
@@ -190,51 +186,7 @@ public class PostalRate {
         int decimalPlaces = weight.length() - integerPlaces - 1;
         return decimalPlaces;
     }
-	
-	/*This method calculates the rate for the corresponding postal codes
-	 * Postal codes beginning with:
-	 * A=NL; B=NS; C=PE; E=NB;
-	 * G,H,J=QC; K,L,M,N,P=ON;
-	 * R=MB; S=SK; T=AB; V=BC; X=NU/NTY=YT.
-	 */
-//	public static Destination getProvince(String PostalCode) {
-//		PostalCode.toUpperCase();
-//		Destination dest = null;
-//		if(PostalCode.startsWith("A")) dest=Destination.NL;
-//		if(PostalCode.startsWith("B")) dest=Destination.NS;
-//		if(PostalCode.startsWith("C")) dest=Destination.PE;
-//		if(PostalCode.startsWith("E")) dest=Destination.NB;
-//		if(PostalCode.startsWith("G") || PostalCode.startsWith("H") || PostalCode.startsWith("J")) dest=Destination.QC;
-//		if(PostalCode.startsWith("K") || PostalCode.startsWith("L") || PostalCode.startsWith("M") || PostalCode.startsWith("N")|| PostalCode.startsWith("P")) dest=Destination.ON;
-//		if(PostalCode.startsWith("R")) dest=Destination.MB;
-//		if(PostalCode.startsWith("S")) dest=Destination.SK;
-//		if(PostalCode.startsWith("T")) dest=Destination.AB;
-//		if(PostalCode.startsWith("V")) dest=Destination.BC;
-//		if(PostalCode.startsWith("X")) dest=Destination.NU;
-//		if(PostalCode.startsWith("Y")) dest=Destination.YT;
-//		return dest;
-//	}
-	public static float getMultiplier(float h, float l, float w, float weight, PostType PT) {
-		float densityFactor=0f;
-		float volEquiv;
-		float vol=h*l*w;
-		if(PT== PostType.REGULAR) densityFactor=5000;
-		else if (PT== PostType.PRIORITY || PT==PostType.XPRESS) densityFactor=6000;
-		volEquiv=vol/densityFactor;
-		if(volEquiv>weight) return volEquiv;
-		else return weight;
-	}
-	
-	public static PostType getPostType(String PT) {
-		PostType Regular=PostType.REGULAR;
-		PostType Xpress=PostType.XPRESS;
-		PostType Priority=PostType.PRIORITY;
-		if(PT.equalsIgnoreCase("Regular")) return Regular;
-		else if(PT.equalsIgnoreCase("Express")) return Xpress;
-		else if(PT.equalsIgnoreCase("Priority")) return Priority;
-		else return null;
-	}
-	
+
     public PostalRate(String username, String password) {
         ClientConfig config = new DefaultClientConfig();
         aClient = Client.create(config);
