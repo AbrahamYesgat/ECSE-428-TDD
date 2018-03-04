@@ -153,4 +153,37 @@ public class PostalRateCalculatorTest {
         String expected = "Dimensions must have at most 2 decimals\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
     }
+
+//    @Test
+//    public void unassociatedAddress(){
+//        String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","xpress"};
+//        PostalRate.main(args);
+//        String expected = "Invalid Canadian Postal Code\n";
+//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+//    }
+//
+//    @Test
+//    public void nunavutPostalType(){
+//        String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","priority"};
+//        PostalRate.main(args);
+//        String expected = "Nunavut and Northern Territories do not have Priority shipping\n";
+//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+//    }
+//
+//    @Test
+//    public void volumetricEquivalentChosen(){
+//        assertEquals(10.66, getEquivWeight(40.00, 40.00, 40.00, 10.00, "regular"));
+//    }
+//
+//    @Test
+//    public void weightChosen(){
+//        assertEquals(10.00, getEquivWeight(10.00, 10.00, 10.00, 10.00, "regular"));
+//    }
+//
+//    @Test
+//    public void volumetricXpressPriority(){
+//        assertEquals(12.8, getEquivWeight(40.00, 40.00, 40.00, 10.00, "Xpress"));
+//    }
+
+
 }
