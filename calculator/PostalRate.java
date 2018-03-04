@@ -95,7 +95,7 @@ public class PostalRate {
 		        System.out.print("Dimensions must have at most 2 decimals\n");
             }
             else if(!validDimensions(args[2], args[3], args[4])){
-		        System.out.print("Sum of dimensions must be at most 200 cm\n");
+		        System.out.print("Length + 2(Width + Height) must be at most 300 cm\n");
             }
          // Your username, password and customer number are imported from the following file    	
         	// CPCWS_Rating_Java_Samples/user.properties 
@@ -177,7 +177,7 @@ public class PostalRate {
         float l = Float.valueOf(length);
         float w = Float.valueOf(width);
         float h = Float.valueOf(height);
-        if(l+w+h<=200.00){
+        if(l+(w+h)*2<=300.00){
             validDimensions = true;
         }
         return validDimensions;
