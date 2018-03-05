@@ -28,7 +28,7 @@ public class PostalRateCalculatorTest {
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
 	@Test
-	//Expected String as follows: Postal code source, destination, width length height weight postal type"
+	//Test 1
 	public void noArgs() {
 	    PostalRate.main(null);
 	    String expected = "Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n";
@@ -36,6 +36,7 @@ public class PostalRateCalculatorTest {
 	}
 	
 	@Test
+    //Test 2
 	public void lessArgs(){
 		String args[] = new String[]{"10"};
 		PostalRate.main(args);
@@ -44,6 +45,7 @@ public class PostalRateCalculatorTest {
 	}
 
 	@Test
+    //Test 3
 	public void manyArgs(){
         String args[] = new String[]{"10", "10", "10", "10", "10", "10", "10", "10"};
         PostalRate.main(args);
@@ -52,6 +54,7 @@ public class PostalRateCalculatorTest {
 	}
 
     @Test
+    //Test 4
     public void outOfRangeHigh() {
         String args[] = new String[]{"201","201","201","201","201","201","201"};
         PostalRate.main(args);
@@ -60,6 +63,7 @@ public class PostalRateCalculatorTest {
     }
 
 	@Test
+    //Test 5
 	public void outOfRangeLow() {
         String args[] = new String[]{"0.0001","0.0001","0.0001","0.0001","0.0001","0.0001","0.0001"};
         PostalRate.main(args);
@@ -68,6 +72,7 @@ public class PostalRateCalculatorTest {
 	}
 
 	@Test
+    //Test 6
     public void addressTooLarge() {
         String args[] = new String[]{"A1A1A1A","A1A1A1A","10","10","10","10","10"};
         PostalRate.main(args);
@@ -76,6 +81,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 7
     public void addressTooSmall(){
           String args[] = new String[]{"A1A","A1A","10","10","10","10","10"};
         PostalRate.main(args);
@@ -84,6 +90,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 8
     public void addressOnlyNumbers(){
         String args[] = new String[]{"111111","111111","10","10","10","10","10"};
         PostalRate.main(args);
@@ -92,6 +99,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 9
     public void addressOnlyLetters(){
         String args[] = new String[]{"AAAAAA","AAAAAA","10","10","10","10","10"};
         PostalRate.main(args);
@@ -100,6 +108,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 10
     public void addressLowerCase(){
         String args[] = new String[]{"a1a1a1","a1a1a1","10","10","10","10","Xpresspost"};
         PostalRate.main(args);
@@ -107,6 +116,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 11
     public void invalidPostType(){
         String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","10","aaa"};
         PostalRate.main(args);
@@ -115,6 +125,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 12
     public void weightPrecision(){
         String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","25.0001","Xpresspost"};
         PostalRate.main(args);
@@ -123,6 +134,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 13
     public void largeWeight(){
         String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","30.01","Xpresspost"};
         PostalRate.main(args);
@@ -131,6 +143,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 14
     public void dimensionPrecision(){
         String args[] = new String[]{"A1A1A1","A1A1A1","0.001","10.002","30.004","30","Xpresspost"};
         PostalRate.main(args);
@@ -139,6 +152,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 15
     public void dimensionsOverLimit(){
         String args[] = new String[]{"A1A1A1","A1A1A1","100","75","75","10","Xpresspost"};
         PostalRate.main(args);
@@ -147,6 +161,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 16
     public void dimensionsTooSmall(){
         String args[] = new String[]{"A1A1A1","A1A1A1","0.0099","0.009","0.001","10","Xpresspost"};
         PostalRate.main(args);
@@ -155,6 +170,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 17
     public void unassociatedAddress(){
         String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","Xpresspost"};
         PostalRate.main(args);
@@ -163,6 +179,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 18
     public void nunavutPostalType(){
         String args[] = new String[]{"X0A0H0","X0A0H0","10","10","10","10","Priority"};
         PostalRate.main(args);
@@ -171,6 +188,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 19
     public void validRegularRate(){
         String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "Regular"};
         PostalRate.main(args);
@@ -179,6 +197,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 20
     public void validXpressRate(){
         String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "Xpresspost"};
         PostalRate.main(args);
@@ -187,6 +206,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 21
     public void validPriorityRate(){
         String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "Priority"};
         PostalRate.main(args);
@@ -195,6 +215,7 @@ public class PostalRateCalculatorTest {
     }
 
     @Test
+    //Test 22
     public void apiExceptions(){
         String args[] = new String[]{"X1D1D1", "X1D1D1", "10", "10", "10", "10", "Regular"};
         PostalRate.main(args);
