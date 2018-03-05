@@ -25,27 +25,11 @@ public class PostalRate {
 	public double distRate,packageRate,totalRate;
 	public String destPostalCode;
 	public String sourcePostalCode;
-	public PostType postType;
 	public static Destination destination;
 	private Client aClient;
 	private static final String LINK = "https://ct.soa-gw.canadapost.ca/rs/ship/price";
-	
-//	public enum Destination {
-//        AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT
-//	}
-	public enum PostType {
-		RegularParcel, Xpresspost, Priority
-	}
 
 	public static void main (String args[]) {
-		String sourcePC=args[0].toUpperCase();
-		String destPC=args[1].toUpperCase();
-		String postType = args[6];
-		width=Float.valueOf(args[2]);
-		length=Float.valueOf(args[3]);
-		height=Float.valueOf(args[4]);
-		weight=Float.valueOf(args[5]);
-		
 		if(args==null || args.length != 7) {
 			System.out.print("Usage: PostalRate sourcePostalCode, destPostalCode, width, length, height, weight, postaltype\n");
 		}
@@ -65,7 +49,7 @@ public class PostalRate {
 		            invalidAddress = true;
                 }
                 else {
-		            if(!args[i].matches("^([A-Z]|[a-z]){1}\\d{1}([A-Z]|[a-z]){1}\\d{1}([A-Z]|[a-z]){1}\\d{1}")){
+		            if(!args[i].matches("^([A-Z]){1}\\d{1}([A-Z]){1}\\d{1}([A-Z]){1}\\d{1}")){
 		               invalidAddress = true;
                     }
                 }
@@ -79,8 +63,8 @@ public class PostalRate {
             else if(invalidAddress){
                 System.out.print("Input a valid address: X#X#X#\n");
             }
-            else if(!(args[6].equalsIgnoreCase("Xpress")) &&!(args[6].equalsIgnoreCase("Regular"))&&!(args[6].equalsIgnoreCase("Priority"))){
-		        System.out.print("Post types available: “Xpress”, “Regular”, “Priority”\n");
+            else if(!(args[6].equals("Xpresspost")) &&!(args[6].equals("Regular"))&&!(args[6].equals("Priority"))){
+		        System.out.print("Post types available: “Xpresspost”, “Regular”, “Priority”\n");
             }
             else if(Float.valueOf(args[5]) > 30.01){
 		        System.out.print("Weight must be at most 30.00 kg\n");
@@ -94,76 +78,88 @@ public class PostalRate {
             else if(!validDimensions(args[2], args[3], args[4])){
 		        System.out.print("Length + 2(Width + Height) must be at most 300 cm\n");
             }
-         // Your username, password and customer number are imported from the following file    	
-        	// CPCWS_Rating_Java_Samples/user.properties 
-        	Properties userProps = new Properties();
-        	FileInputStream propInputStream;
-    		try {
-    			propInputStream = new FileInputStream("user.properties");
-    			userProps.load(propInputStream);
-    			propInputStream.close(); // better in finally block
-    		} catch (Exception e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace(System.out);
-    			return;
-    		}
-        	String username = userProps.getProperty("username");
-        	String password = userProps.getProperty("password");
-        	String mailedBy = userProps.getProperty("mailedBy"); 
-    		
-    		// Create GetRates XML Request Object
-    		MailingScenario mailingScenario = new MailingScenario();
-    		mailingScenario.setCustomerNumber(mailedBy);
-    		MailingScenario.ParcelCharacteristics parcelCharacteristics = new MailingScenario.ParcelCharacteristics();
-    		parcelCharacteristics.setWeight(new BigDecimal(weight));
-    		Dimensions dim = new Dimensions();
-    		dim.setHeight(new BigDecimal(height));
-    		dim.setLength(new BigDecimal(length));
-    		dim.setWidth(new BigDecimal(width));
-    		parcelCharacteristics.setDimensions(dim);
-    		mailingScenario.setOriginPostalCode(sourcePC);
-    		Domestic domestic = new Domestic();
-    		domestic.setPostalCode(destPC);		
-    		Destination destination = new Destination();
-    		destination.setDomestic(domestic);
-    		mailingScenario.setDestination(destination);
-    		mailingScenario.setParcelCharacteristics(parcelCharacteristics);
-    		// Execute GetRates Request
-            PostalRate myClient = new PostalRate(username, password);
-            ClientResponse resp = myClient.createMailingScenario(mailingScenario);
-            InputStream respIS = resp.getEntityInputStream();
-            
-            System.out.println("HTTP Response Status: " + resp.getStatus() + " " + resp.getClientResponseStatus());
-
-            // Example of using JAXB to parse xml response
-            JAXBContext jc;
-            try {
-            	jc = JAXBContext.newInstance(PriceQuotes.class, Messages.class);
-                Object entity = jc.createUnmarshaller().unmarshal(respIS);
-                // Determine whether response data matches GetRatesInfo schema.
-                if (entity instanceof PriceQuotes) {
-                	PriceQuotes priceQuotes = (PriceQuotes) entity;
-                    for (Iterator<PriceQuotes.PriceQuote> iter = priceQuotes.getPriceQuotes().iterator(); iter.hasNext();) { 
-                    	PriceQuotes.PriceQuote aPriceQuote = (PriceQuotes.PriceQuote) iter.next();   
-                    		if(aPriceQuote.getServiceName().equalsIgnoreCase(postType) || ((aPriceQuote.getServiceName().equalsIgnoreCase("Regular Parcel") && postType.equals("Regular") ) )) {
-                    			System.out.println("Service Name: " + aPriceQuote.getServiceName());
-                    			System.out.println("Price: $" + aPriceQuote.getPriceDetails().getDue() + "\n");
-                    		}
-                    }
-                } else {
-                    // Assume Error Schema
-                    Messages messageData = (Messages) entity;
-                    for (Iterator<Messages.Message> iter = messageData.getMessage().iterator(); iter.hasNext();) {
-                        Messages.Message aMessage = (Messages.Message) iter.next();
-                        System.out.println("Error Code: " + aMessage.getCode());
-                        System.out.println("Error Msg: " + aMessage.getDescription());
-                    }
-                }
-            } catch (Exception e) {
-            	e.printStackTrace(System.out);
+            else if(!getProvinceAddress(args[0]) && !getProvinceAddress(args[1])){
+                System.out.print("Invalid Canadian Postal Code\n");
             }
+            else if((args[0].startsWith("X")||args[1].startsWith("X")) && args[6].equalsIgnoreCase("Priority")){
+		        System.out.print("Nunavut and Northern Territories do not have Priority shipping\n");
+            }
+            else {
+                String sourcePC = args[0].toUpperCase();
+                String destPC = args[1].toUpperCase();
+                String postType = args[6];
+                width = Float.valueOf(args[2]);
+                length = Float.valueOf(args[3]);
+                height = Float.valueOf(args[4]);
+                weight = Float.valueOf(args[5]);
 
-            myClient.close();   
+                // Your username, password and customer number are imported from the following file
+                // CPCWS_Rating_Java_Samples/user.properties
+                Properties userProps = new Properties();
+                FileInputStream propInputStream;
+                try {
+                    propInputStream = new FileInputStream("user.properties");
+                    userProps.load(propInputStream);
+                    propInputStream.close(); // better in finally block
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace(System.out);
+                    return;
+                }
+                String username = userProps.getProperty("username");
+                String password = userProps.getProperty("password");
+                String mailedBy = userProps.getProperty("mailedBy");
+
+                // Create GetRates XML Request Object
+                MailingScenario mailingScenario = new MailingScenario();
+                mailingScenario.setCustomerNumber(mailedBy);
+                MailingScenario.ParcelCharacteristics parcelCharacteristics = new MailingScenario.ParcelCharacteristics();
+                parcelCharacteristics.setWeight(new BigDecimal(weight));
+                Dimensions dim = new Dimensions();
+                dim.setHeight(new BigDecimal(height));
+                dim.setLength(new BigDecimal(length));
+                dim.setWidth(new BigDecimal(width));
+                parcelCharacteristics.setDimensions(dim);
+                mailingScenario.setOriginPostalCode(sourcePC);
+                Domestic domestic = new Domestic();
+                domestic.setPostalCode(destPC);
+                Destination destination = new Destination();
+                destination.setDomestic(domestic);
+                mailingScenario.setDestination(destination);
+                mailingScenario.setParcelCharacteristics(parcelCharacteristics);
+                // Execute GetRates Request
+                PostalRate myClient = new PostalRate(username, password);
+                ClientResponse resp = myClient.createMailingScenario(mailingScenario);
+                InputStream respIS = resp.getEntityInputStream();
+
+                // Example of using JAXB to parse xml response
+                JAXBContext jc;
+                try {
+                    jc = JAXBContext.newInstance(PriceQuotes.class, Messages.class);
+                    Object entity = jc.createUnmarshaller().unmarshal(respIS);
+                    // Determine whether response data matches GetRatesInfo schema.
+                    if (entity instanceof PriceQuotes) {
+                        PriceQuotes priceQuotes = (PriceQuotes) entity;
+                        for (Iterator<PriceQuotes.PriceQuote> iter = priceQuotes.getPriceQuotes().iterator(); iter.hasNext(); ) {
+                            PriceQuotes.PriceQuote aPriceQuote = (PriceQuotes.PriceQuote) iter.next();
+                            if (aPriceQuote.getServiceName().equalsIgnoreCase(postType) || ((aPriceQuote.getServiceName().equalsIgnoreCase("Regular Parcel") && postType.equals("Regular")))) {
+                                System.out.print("Price: $" + aPriceQuote.getPriceDetails().getDue() + "\n");
+                            }
+                        }
+                    } else {
+                        // Assume Error Schema
+                        Messages messageData = (Messages) entity;
+                        for (Iterator<Messages.Message> iter = messageData.getMessage().iterator(); iter.hasNext(); ) {
+                            Messages.Message aMessage = (Messages.Message) iter.next();
+                            System.out.print(aMessage.getDescription()+"\n");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace(System.out);
+                }
+
+                myClient.close();
+            }
         }
 	}
 
@@ -186,6 +182,23 @@ public class PostalRate {
         int decimalPlaces = weight.length() - integerPlaces - 1;
         return decimalPlaces;
     }
+    public static boolean getProvinceAddress(String PostalCode) {
+	    PostalCode.toUpperCase();
+	    boolean dest = false;
+	    if(PostalCode.startsWith("A")) dest=true;
+	    if(PostalCode.startsWith("B")) dest=true;
+	    if(PostalCode.startsWith("C")) dest=true;
+	    if(PostalCode.startsWith("E")) dest=true;
+	    if(PostalCode.startsWith("G") || PostalCode.startsWith("H") || PostalCode.startsWith("J")) dest=true;
+	    if(PostalCode.startsWith("K") || PostalCode.startsWith("L") || PostalCode.startsWith("M") || PostalCode.startsWith("N")|| PostalCode.startsWith("P")) dest=true;
+	    if(PostalCode.startsWith("R")) dest=true;
+	    if(PostalCode.startsWith("S")) dest=true;
+	    if(PostalCode.startsWith("T")) dest=true;
+	    if(PostalCode.startsWith("V")) dest=true;
+	    if(PostalCode.startsWith("X")) dest=true;
+	    if(PostalCode.startsWith("Y")) dest=true;
+	    return dest;
+	}
 
     public PostalRate(String username, String password) {
         ClientConfig config = new DefaultClientConfig();

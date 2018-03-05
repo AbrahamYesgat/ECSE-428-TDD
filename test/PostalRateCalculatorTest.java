@@ -101,22 +101,22 @@ public class PostalRateCalculatorTest {
 
     @Test
     public void addressLowerCase(){
-        String args[] = new String[]{"a1a1a1","a1a1a1","10","10","10","10","xpress"};
+        String args[] = new String[]{"a1a1a1","a1a1a1","10","10","10","10","Xpresspost"};
         PostalRate.main(args);
-        assertEquals("", systemOutRule.getLogWithNormalizedLineSeparator());
+        assertEquals("Input a valid address: X#X#X#\n", systemOutRule.getLogWithNormalizedLineSeparator());
     }
 
     @Test
     public void invalidPostType(){
         String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","10","aaa"};
         PostalRate.main(args);
-        String expected = "Post types available: “Xpress”, “Regular”, “Priority”\n";
+        String expected = "Post types available: “Xpresspost”, “Regular”, “Priority”\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
     }
 
     @Test
     public void weightPrecision(){
-        String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","25.0001","xpress"};
+        String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","25.0001","Xpresspost"};
         PostalRate.main(args);
         String expected = "Weight must have at must 3 decimals\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
@@ -124,7 +124,7 @@ public class PostalRateCalculatorTest {
 
     @Test
     public void largeWeight(){
-        String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","30.01","xpress"};
+        String args[] = new String[]{"A1A1A1","A1A1A1","10","10","10","30.01","Xpresspost"};
         PostalRate.main(args);
         String expected = "Weight must be at most 30.00 kg\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
@@ -132,7 +132,7 @@ public class PostalRateCalculatorTest {
 
     @Test
     public void dimensionPrecision(){
-        String args[] = new String[]{"A1A1A1","A1A1A1","0.001","10.002","30.004","30","xpress"};
+        String args[] = new String[]{"A1A1A1","A1A1A1","0.001","10.002","30.004","30","Xpresspost"};
         PostalRate.main(args);
         String expected = "Dimensions must have at most 2 decimals\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
@@ -140,7 +140,7 @@ public class PostalRateCalculatorTest {
 
     @Test
     public void dimensionsOverLimit(){
-        String args[] = new String[]{"A1A1A1","A1A1A1","100","75","75","10","xpress"};
+        String args[] = new String[]{"A1A1A1","A1A1A1","100","75","75","10","Xpresspost"};
         PostalRate.main(args);
         String expected = "Length + 2(Width + Height) must be at most 300 cm\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
@@ -148,7 +148,7 @@ public class PostalRateCalculatorTest {
 
     @Test
     public void dimensionsTooSmall(){
-        String args[] = new String[]{"A1A1A1","A1A1A1","0.0099","0.009","0.001","10","xpress"};
+        String args[] = new String[]{"A1A1A1","A1A1A1","0.0099","0.009","0.001","10","Xpresspost"};
         PostalRate.main(args);
         String expected = "Dimensions must have at most 2 decimals\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
@@ -156,41 +156,49 @@ public class PostalRateCalculatorTest {
 
     @Test
     public void unassociatedAddress(){
-        String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","xpress"};
+        String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","Xpresspost"};
         PostalRate.main(args);
         String expected = "Invalid Canadian Postal Code\n";
         assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
     }
-//
-//    @Test
-//    public void nunavutPostalType(){
-//        String args[] = new String[]{"D1D1D1","D1D1D1","10","10","10","10","priority"};
-//        PostalRate.main(args);
-//        String expected = "Nunavut and Northern Territories do not have Priority shipping\n";
-//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
-//    }
-//
-//    @Test
-//    public void validRegularRate(){
-//        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "regular"};
-//        PostalRate.main(args);
-//        String expected = "The cost will be 33.58$\n";
-//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
-//    }
-//
-//    @Test
-//    public void validXpressRate(){
-//        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "xpress"};
-//        PostalRate.main(args);
-//        String expected = "The cost will be 87.23$\n";
-//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
-//    }
-//
-//    @Test
-//    public void validPriorityRate(){
-//        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "priority"};
-//        PostalRate.main(args);
-//        String expected = "The cost will be 116.94$\n";
-//        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
-//    }
+
+    @Test
+    public void nunavutPostalType(){
+        String args[] = new String[]{"X0A0H0","X0A0H0","10","10","10","10","Priority"};
+        PostalRate.main(args);
+        String expected = "Nunavut and Northern Territories do not have Priority shipping\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void validRegularRate(){
+        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "Regular"};
+        PostalRate.main(args);
+        String expected = "Price: $30.94\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void validXpressRate(){
+        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "Xpresspost"};
+        PostalRate.main(args);
+        String expected = "Price: $81.83\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void validPriorityRate(){
+        String args[] = new String[]{"T6G2R3", "H9W6C3", "10", "10", "10", "10", "Priority"};
+        PostalRate.main(args);
+        String expected = "Price: $108.29\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void apiExceptions(){
+        String args[] = new String[]{"X1D1D1", "X1D1D1", "10", "10", "10", "10", "Regular"};
+        PostalRate.main(args);
+        String expected = "The Postal Code is invalid.\n";
+        assertEquals(expected, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
 }
